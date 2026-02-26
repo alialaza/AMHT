@@ -2,130 +2,128 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AMHT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AMHT - Sultan Edition</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { 
             --sultan-purple-dark: #3a1a5b; 
             --sultan-gold: #d4af37; 
-            --bg: #f0f2f5; 
+            --whatsapp-bg: #e5ddd5;
+            --sent-color: #dcf8c6;
         }
 
-        /* ضبط الحجم ليكون متناسقاً 100% مع شاشة الموبايل */
-        * { box-sizing: border-box; }
-        body, html { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
+        /* ضبط الشاشة لمنع الاختفاء في أي هاتف */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { 
+            height: 100%; width: 100%; margin: 0; padding: 0; 
+            overflow: hidden; position: fixed; font-family: sans-serif;
+            background-color: var(--sultan-purple-dark);
         }
 
         .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
+            display: flex; flex-direction: column;
+            height: 100%; width: 100%; max-width: 500px; margin: 0 auto;
+            background: var(--whatsapp-bg);
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
         }
 
-        /* الهيدر */
+        /* الهيدر المحترف */
         .header {
             background: var(--sultan-purple-dark);
-            color: var(--sultan-gold);
-            padding: 15px;
-            text-align: center;
+            color: white; padding: 12px 15px;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid var(--sultan-gold);
-            flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            flex-shrink: 0; z-index: 100;
         }
 
-        .battery-text { font-size: 12px; color: #fff; margin-top: 5px; }
+        .header-title { font-weight: bold; font-size: 18px; color: var(--sultan-gold); }
+        .battery-status { font-size: 11px; opacity: 0.9; }
 
-        /* منطقة الشات */
+        /* منطقة الشات (تليجرام/واتساب) */
         #chatBox {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #e5ddd5; /* لون خلفية يشبه الواتساب */
+            flex: 1; overflow-y: auto; padding: 15px;
+            display: flex; flex-direction: column; gap: 10px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .msg {
-            padding: 10px 15px;
-            border-radius: 15px;
-            max-width: 85%;
-            font-size: 16px;
-            position: relative;
+            padding: 8px 12px; border-radius: 12px; max-width: 80%;
+            font-size: 15px; line-height: 1.4; position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
             word-wrap: break-word;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
         }
+        .sent { align-self: flex-end; background: var(--sent-color); border-bottom-left-radius: 2px; }
+        .received { align-self: flex-start; background: white; border-bottom-right-radius: 2px; }
 
-        .sent { align-self: flex-end; background: #dcf8c6; border-bottom-left-radius: 2px; }
-        .received { align-self: flex-start; background: #ffffff; border-bottom-right-radius: 2px; }
-
-        /* منطقة الإدخال وزر الإرسال (تم تثبيتها لضمان عدم الاختفاء) */
+        /* الفوتر (زر الإرسال الثابت) */
         .footer {
-            background: #f0f0f0;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-top: 1px solid #ddd;
-            flex-shrink: 0;
+            background: #f0f0f0; padding: 10px;
+            display: flex; align-items: center; gap: 10px;
+            flex-shrink: 0; border-top: 1px solid #ddd;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
         }
 
-        input#messageInput {
-            flex: 1;
-            padding: 12px 18px;
-            border-radius: 25px;
-            border: 1px solid #ccc;
-            outline: none;
-            font-size: 16px;
+        .input-wrapper {
+            flex: 1; background: white; border-radius: 25px;
+            padding: 5px 15px; border: 1px solid #ccc;
         }
 
-        .send-btn {
-            background: var(--sultan-purple-dark);
-            color: var(--sultan-gold);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
+        input { width: 100%; border: none; outline: none; font-size: 16px; padding: 8px 0; }
+
+        .btn-action {
+            background: var(--sultan-purple-dark); color: var(--sultan-gold);
+            border: none; width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer; flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .send-btn:active { transform: scale(0.9); }
+        /* أنيميشن النبض */
+        #heartOverlay {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 100px; display: none; z-index: 1000;
+            animation: pulse-anim 0.8s infinite;
+        }
+        @keyframes pulse-anim {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
     </style>
 </head>
 <body>
 
+<div id="heartOverlay">💓</div>
+
 <div class="app-container">
     <div class="header">
-        <div style="font-weight: bold; font-size: 20px;">AMHT</div>
-        <div id="otherBatt" class="battery-text">🔋 جاري فحص بطارية الطرف الآخر...</div>
-        <div style="margin-top: 10px;">
-            <button onclick="sendHeart()" style="background:none; border:none; font-size:25px; cursor:pointer;">💓</button>
+        <div>
+            <div class="header-title">AMHT</div>
+            <div id="statLine" class="battery-status">🔋 جاري فحص بطارية مريم...</div>
+        </div>
+        <div style="display: flex; gap: 15px;">
+            <button onclick="sendPulse()" style="background:none; border:none; font-size:24px; cursor:pointer;">💓</button>
+            <button onclick="clearChat()" style="background:none; border:none; font-size:22px; cursor:pointer;">🗑️</button>
         </div>
     </div>
 
     <div id="chatBox"></div>
 
     <div class="footer">
-        <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
-        <button class="send-btn" onclick="handleSend()">🚀</button>
+        <div class="input-wrapper">
+            <input type="text" id="mInput" placeholder="اكتب رسالة للسلطان...">
+        </div>
+        <button class="btn-action" onclick="sendMsg()">🚀</button>
     </div>
 </div>
 
 <script>
-    const firebaseConfig = {
+    // طلب الإشعارات فوراً
+    if ("Notification" in window) { Notification.requestPermission(); }
+
+    const config = {
         apiKey: "AIzaSyC3m4yZNjiJBE-24KaX0RYESYwUA_qY7UE",
         authDomain: "iraqiran-95bed.firebaseapp.com",
         projectId: "iraqiran-95bed",
@@ -135,71 +133,63 @@
         appId: "1:736293412010:web:d1855197deb6258ce084d3"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(config);
     const db = firebase.database();
 
-    // مسح الرسائل القديمة عند التشغيل الأول لضمان "حذف أي شيء مكتوب سابقاً"
-    // ملاحظة: يمكنك حذف هذا السطر بعد أول تشغيل إذا أردت حفظ الرسائل لاحقاً
-    db.ref('messages').remove(); 
-
-    let user = localStorage.getItem('chat_user') || (prompt("من أنت؟ (علي / مريم)") === "علي" ? "علي" : "مريم");
-    localStorage.setItem('chat_user', user);
+    let user = localStorage.getItem('s_u') || (prompt("من أنت؟ (علي / مريم)") === "علي" ? "علي" : "مريم");
+    localStorage.setItem('s_u', user);
     const other = user === "علي" ? "مريم" : "علي";
 
-    // تحديث حالة البطارية
-    if (navigator.getBattery) {
-        navigator.getBattery().then(batt => {
-            const update = () => db.ref('status/' + user).set({ level: Math.round(batt.level * 100) });
-            update();
-            batt.onlevelchange = update;
+    // تحديث البطارية (موجودة وشغالة)
+    if(navigator.getBattery) {
+        navigator.getBattery().then(b => {
+            const up = () => db.ref('status/'+user).set({l: Math.round(b.level*100)});
+            up(); b.onlevelchange = up;
         });
     }
-    db.ref('status/' + other).on('value', s => {
-        document.getElementById('otherBatt').innerText = `🔋 بطارية ${other}: ${s.val()?.level || '--'}%`;
+    db.ref('status/'+other).on('value', s => {
+        document.getElementById('statLine').innerText = `🔋 بطارية ${other}: ${s.val()?.l || '--'}%`;
     });
 
-    // إرسال الرسائل
-    function handleSend() {
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if (text) {
-            db.ref('messages').push({
-                sender: user,
-                text: text,
-                ts: Date.now()
-            });
-            input.value = '';
+    // إرسال الرسائل (🚀 موجود)
+    function sendMsg() {
+        const i = document.getElementById('mInput');
+        if(i.value.trim()) {
+            db.ref('msgs').push({ s: user, t: i.value, ts: Date.now() });
+            i.value = '';
         }
     }
 
-    // عرض الرسائل وتثبيت السكرول لأسفل
-    db.ref('messages').on('value', s => {
-        const box = document.getElementById('chatBox');
-        box.innerHTML = '';
-        s.forEach(child => {
-            const m = child.val();
-            const div = document.createElement('div');
-            div.className = `msg ${m.sender === user ? 'sent' : 'received'}`;
-            div.innerText = m.text;
-            box.appendChild(div);
+    // استقبال الرسائل (بشكل واتساب)
+    db.ref('msgs').on('value', s => {
+        const c = document.getElementById('chatBox');
+        c.innerHTML = '';
+        s.forEach(x => {
+            const m = x.val();
+            const d = document.createElement('div');
+            d.className = `msg ${m.s === user ? 'sent' : 'received'}`;
+            d.innerText = m.t;
+            c.appendChild(d);
         });
-        box.scrollTop = box.scrollHeight;
+        c.scrollTop = c.scrollHeight;
     });
 
-    // ميزة النبض
-    function sendHeart() { db.ref('hearts/' + other).set({ from: user, ts: Date.now() }); }
-    db.ref('hearts/' + user).on('value', s => {
-        if (s.val()) {
-            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-            alert("💓 وصلتك نبضة قلب من " + other);
-            db.ref('hearts/' + user).remove();
+    // ميزة النبض (💓 موجودة) مع اهتزاز وإشعار
+    function sendPulse() { db.ref('p/'+other).set({ f: user, ts: Date.now() }); }
+    db.ref('p/'+user).on('value', s => {
+        if(s.val()) {
+            const overlay = document.getElementById('heartOverlay');
+            overlay.style.display = 'block';
+            if(navigator.vibrate) navigator.vibrate([300, 100, 300]);
+            new Notification("AMHT 💓", { body: "أرسل لك " + other + " نبضة حب!" });
+            setTimeout(() => { overlay.style.display = 'none'; db.ref('p/'+user).remove(); }, 3000);
         }
     });
 
-    // معالجة الضغط على Enter لإرسال الرسالة
-    document.getElementById('messageInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleSend();
-    });
+    // ميزة حذف المحادثة (🗑️ موجودة)
+    function clearChat() { if(confirm("هل تريد حذف كل الرسائل؟")) db.ref('msgs').remove(); }
+
+    document.getElementById('mInput').addEventListener('keypress', e => { if(e.key==='Enter') sendMsg(); });
 </script>
 </body>
 </html>
