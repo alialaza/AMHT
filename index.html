@@ -10,54 +10,121 @@
         :root { 
             --sultan-purple-dark: #3a1a5b; 
             --sultan-gold: #d4af37; 
-            --soft-grey: #f0f2f5; 
+            --bg: #f0f2f5; 
         }
-        
-        /* جعل الحجم يملأ شاشة الهاتف تماماً */
-        body, html { height: 100%; margin: 0; overflow: hidden; font-family: sans-serif; background: var(--soft-grey); }
-        .main-container { display: flex; flex-direction: column; height: 100vh; }
-        
-        .header { background: var(--sultan-purple-dark); color: var(--sultan-gold); padding: 12px; text-align: center; border-bottom: 2px solid var(--sultan-gold); flex-shrink: 0; }
-        .battery-info { font-size: 11px; color: white; margin-top: 4px; }
-        
-        #chatBox { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
-        .msg { padding: 10px 14px; border-radius: 18px; max-width: 80%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
-        .sent { align-self: flex-end; background: #dcf8c6; color: #000; border-bottom-left-radius: 2px; }
-        .received { align-self: flex-start; background: #fff; color: #000; border-bottom-right-radius: 2px; }
 
-        .footer { background: #fff; padding: 10px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #ddd; flex-shrink: 0; }
-        input { flex: 1; border: 1px solid #ccc; padding: 12px; border-radius: 25px; outline: none; font-size: 16px; }
-        .btn-send { background: var(--sultan-purple-dark); color: var(--sultan-gold); border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; }
+        /* ضبط الحجم ليكون متناسقاً 100% مع شاشة الموبايل */
+        * { box-sizing: border-box; }
+        body, html { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* الهيدر */
+        .header {
+            background: var(--sultan-purple-dark);
+            color: var(--sultan-gold);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--sultan-gold);
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .battery-text { font-size: 12px; color: #fff; margin-top: 5px; }
+
+        /* منطقة الشات */
+        #chatBox {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #e5ddd5; /* لون خلفية يشبه الواتساب */
+        }
+
+        .msg {
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 85%;
+            font-size: 16px;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .sent { align-self: flex-end; background: #dcf8c6; border-bottom-left-radius: 2px; }
+        .received { align-self: flex-start; background: #ffffff; border-bottom-right-radius: 2px; }
+
+        /* منطقة الإدخال وزر الإرسال (تم تثبيتها لضمان عدم الاختفاء) */
+        .footer {
+            background: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        input#messageInput {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .send-btn {
+            background: var(--sultan-purple-dark);
+            color: var(--sultan-gold);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .send-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-<div class="main-container">
+<div class="app-container">
     <div class="header">
-        <div style="font-weight: bold; font-size: 18px;">AMHT</div>
-        <div id="otherBatt" class="battery-info">🔋 جاري جلب البطارية...</div>
+        <div style="font-weight: bold; font-size: 20px;">AMHT</div>
+        <div id="otherBatt" class="battery-text">🔋 جاري فحص بطارية الطرف الآخر...</div>
         <div style="margin-top: 10px;">
-            <button onclick="sendHeart()" style="background:none; border:none; font-size:22px; cursor:pointer;">💓</button>
-            <button onclick="clearChat()" style="background:none; border:none; font-size:22px; cursor:pointer;">🗑️</button>
+            <button onclick="sendHeart()" style="background:none; border:none; font-size:25px; cursor:pointer;">💓</button>
         </div>
     </div>
 
     <div id="chatBox"></div>
 
     <div class="footer">
-        <input type="text" id="messageInput" placeholder="اكتب هنا يا علي...">
-        <button class="btn-send" onclick="handleSend()">إرسال</button>
+        <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+        <button class="send-btn" onclick="handleSend()">🚀</button>
     </div>
 </div>
 
 <script>
-    // طلب إذن الإشعارات فور فتح التطبيق
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") console.log("تم تفعيل الإشعارات");
-        });
-    }
-
     const firebaseConfig = {
         apiKey: "AIzaSyC3m4yZNjiJBE-24KaX0RYESYwUA_qY7UE",
         authDomain: "iraqiran-95bed.firebaseapp.com",
@@ -68,35 +135,45 @@
         appId: "1:736293412010:web:d1855197deb6258ce084d3"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
-    let user = localStorage.getItem('amht_user') || (prompt("من أنت؟ (علي / مريم)") === "علي" ? "علي" : "مريم");
-    localStorage.setItem('amht_user', user);
+
+    // مسح الرسائل القديمة عند التشغيل الأول لضمان "حذف أي شيء مكتوب سابقاً"
+    // ملاحظة: يمكنك حذف هذا السطر بعد أول تشغيل إذا أردت حفظ الرسائل لاحقاً
+    db.ref('messages').remove(); 
+
+    let user = localStorage.getItem('chat_user') || (prompt("من أنت؟ (علي / مريم)") === "علي" ? "علي" : "مريم");
+    localStorage.setItem('chat_user', user);
     const other = user === "علي" ? "مريم" : "علي";
 
-    // تحديث البطارية
+    // تحديث حالة البطارية
     if (navigator.getBattery) {
         navigator.getBattery().then(batt => {
-            const up = () => db.ref('status/' + user).set({ battery: Math.round(batt.level * 100) });
-            up(); batt.onlevelchange = up;
+            const update = () => db.ref('status/' + user).set({ level: Math.round(batt.level * 100) });
+            update();
+            batt.onlevelchange = update;
         });
     }
     db.ref('status/' + other).on('value', s => {
-        document.getElementById('otherBatt').innerText = `🔋 بطارية ${other}: ${s.val()?.battery || '--'}%`;
+        document.getElementById('otherBatt').innerText = `🔋 بطارية ${other}: ${s.val()?.level || '--'}%`;
     });
 
-    // إرسال رسالة مع إشعار
+    // إرسال الرسائل
     function handleSend() {
-        const txt = document.getElementById('messageInput').value.trim();
-        if (txt) {
-            db.ref('messages').push({ sender: user, text: txt, ts: Date.now() });
-            document.getElementById('messageInput').value = '';
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (text) {
+            db.ref('messages').push({
+                sender: user,
+                text: text,
+                ts: Date.now()
+            });
+            input.value = '';
         }
     }
 
-    // عرض الرسائل وتناسقها
-    db.ref('messages').limitToLast(20).on('value', s => {
+    // عرض الرسائل وتثبيت السكرول لأسفل
+    db.ref('messages').on('value', s => {
         const box = document.getElementById('chatBox');
         box.innerHTML = '';
         s.forEach(child => {
@@ -109,17 +186,20 @@
         box.scrollTop = box.scrollHeight;
     });
 
-    // ميزة النبض مع اهتزاز وإشعار
+    // ميزة النبض
     function sendHeart() { db.ref('hearts/' + other).set({ from: user, ts: Date.now() }); }
     db.ref('hearts/' + user).on('value', s => {
         if (s.val()) {
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            new Notification("AMHT 💓", { body: `أرسل لك ${other} نبضة قلب!` });
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+            alert("💓 وصلتك نبضة قلب من " + other);
             db.ref('hearts/' + user).remove();
         }
     });
 
-    function clearChat() { if(confirm("حذف الكل؟")) db.ref('messages').remove(); }
+    // معالجة الضغط على Enter لإرسال الرسالة
+    document.getElementById('messageInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
 </script>
 </body>
 </html>
