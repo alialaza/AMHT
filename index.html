@@ -11,24 +11,19 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; position: fixed; font-family: sans-serif; background: var(--p); }
         .wrapper { display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 500px; margin: 0 auto; background: var(--bg); background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
-        
         .header { background: var(--p); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--g); flex-shrink: 0; }
-        .batt { font-size: 11px; color: var(--g); }
-        
         #chatBox { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); word-wrap: break-word; }
         .sent { align-self: flex-end; background: #dcf8c6; border-bottom-left-radius: 2px; }
         .received { align-self: flex-start; background: white; border-bottom-right-radius: 2px; }
-
         .footer { background: #f0f0f0; padding: 10px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
         .in-wrap { flex: 1; background: white; border-radius: 25px; padding: 5px 15px; border: 1px solid #ccc; }
         input { width: 100%; border: none; outline: none; font-size: 16px; padding: 8px 0; }
-        .btn { background: var(--p); color: var(--g); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
-        .love-btn { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
-
+        .btn { background: var(--p); color: var(--g); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .love-btn { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         #pulseH { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; display: none; z-index: 1000; animation: beat 0.8s infinite; }
-        @keyframes beat { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.3); } }
-        .floating-heart { position: fixed; bottom: -50px; font-size: 30px; animation: floatUp 4s linear forwards; z-index: 999; pointer-events: none; }
+        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+        .floating-heart { position: fixed; bottom: -50px; font-size: 30px; animation: floatUp 4s linear forwards; z-index: 999; }
         @keyframes floatUp { 0% { bottom: -50px; opacity: 1; } 100% { bottom: 110vh; opacity: 0; } }
     </style>
 </head>
@@ -36,7 +31,7 @@
 <div id="pulseH">💓</div>
 <div class="wrapper">
     <div class="header">
-        <div><b style="color:var(--g)">AMHT</b><br><small id="st" class="batt">🔋 جاري الفحص...</small></div>
+        <div><b style="color:var(--g)">AMHT</b><br><small id="st" style="font-size:10px;color:var(--g)">🔋 جاري الفحص...</small></div>
         <div style="display:flex; gap:8px; align-items:center;">
             <button class="love-btn" onclick="triggerLove()">أحبك</button>
             <button onclick="triggerPulse()" style="background:none; border:none; font-size:24px; cursor:pointer;">💓</button>
@@ -50,13 +45,15 @@
 </div>
 
 <script>
+    // إعدادات Firebase
     const config = { apiKey: "AIzaSyC3m4yZNjiJBE-24KaX0RYESYwUA_qY7UE", authDomain: "iraqiran-95bed.firebaseapp.com", projectId: "iraqiran-95bed", databaseURL: "https://iraqiran-95bed-default-rtdb.firebaseio.com", storageBucket: "iraqiran-95bed.firebasestorage.app", messagingSenderId: "736293412010", appId: "1:736293412010:web:d1855197deb6258ce084d3" };
-    firebase.initializeApp(config); const db = firebase.database();
-    
-    // تم حذف كود حذف الرسائل التلقائي لضمان وصول الرسائل وبقائها
-    
-    let u = localStorage.getItem('u') || (prompt("علي أم مريم؟") === "علي" ? "علي" : "مريم");
-    localStorage.setItem('u', u); const o = u === "علي" ? "مريم" : "علي";
+    firebase.initializeApp(config);
+    const db = firebase.database();
+
+    // تحديد الهوية
+    let u = localStorage.getItem('u') || (prompt("من أنت؟ (علي / مريم)") === "علي" ? "علي" : "مريم");
+    localStorage.setItem('u', u);
+    const o = u === "علي" ? "مريم" : "علي";
 
     // تحديث البطارية
     if(navigator.getBattery) { 
@@ -69,60 +66,56 @@
         document.getElementById('st').innerText = `🔋 بطارية ${o}: ${s.val()?.l || '--'}%`; 
     });
 
-    // إرسال الرسائل
-    function sendM() { 
-        const i = document.getElementById('mIn'); 
-        if(i.value.trim()) { 
-            db.ref('msgs').push({ s: u, t: i.value, ts: Date.now() }); 
-            i.value = ''; 
-        } 
+    // إرسال الرسالة
+    function sendM() {
+        const i = document.getElementById('mIn');
+        if(i.value.trim()) {
+            db.ref('messages').push({ sender: u, text: i.value, time: Date.now() });
+            i.value = '';
+        }
     }
 
-    // استقبال الرسائل (هذا الجزء سيعمل الآن بشكل مستمر)
-    db.ref('msgs').limitToLast(50).on('value', s => { 
-        const b = document.getElementById('chatBox'); 
-        b.innerHTML = ''; 
-        s.forEach(x => { 
-            const m = x.val(); 
-            const d = document.createElement('div'); 
-            d.className = `msg ${m.s === u ? 'sent' : 'received'}`; 
-            d.innerText = m.t; 
-            b.appendChild(d); 
-        }); 
-        b.scrollTop = b.scrollHeight; 
+    // استقبال الرسائل بشكل مباشر
+    db.ref('messages').on('value', snapshot => {
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML = '';
+        snapshot.forEach(child => {
+            const data = child.val();
+            const div = document.createElement('div');
+            div.className = `msg ${data.sender === u ? 'sent' : 'received'}`;
+            div.innerText = data.text;
+            chatBox.appendChild(div);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    // النبض (💓)
+    // ميزة النبض (5 ثوانٍ)
     function triggerPulse() { db.ref('signals/'+o+'/pulse').set(Date.now()); }
-    db.ref('signals/'+u+'/pulse').on('value', s => { 
-        if(s.val()) { 
-            const h = document.getElementById('pulseH'); 
-            h.style.display = 'block'; 
-            if(navigator.vibrate) navigator.vibrate([300, 100, 300]); 
-            setTimeout(() => { h.style.display = 'none'; db.ref('signals/'+u+'/pulse').remove(); }, 5000); 
-        } 
+    db.ref('signals/'+u+'/pulse').on('value', s => {
+        if(s.val()) {
+            const h = document.getElementById('pulseH');
+            h.style.display = 'block';
+            if(navigator.vibrate) navigator.vibrate([300, 100, 300]);
+            setTimeout(() => { h.style.display = 'none'; db.ref('signals/'+u+'/pulse').remove(); }, 5000);
+        }
     });
 
-    // زر أحبك (القلوب)
+    // ميزة القلوب (5 ثوانٍ)
     function triggerLove() { db.ref('signals/'+o+'/love').set(Date.now()); }
-    db.ref('signals/'+u+'/love').on('value', s => { 
-        if(s.val()) { 
-            let interval = setInterval(createHeart, 150); 
-            setTimeout(() => { clearInterval(interval); db.ref('signals/'+u+'/love').remove(); }, 5000); 
-        } 
+    db.ref('signals/'+u+'/love').on('value', s => {
+        if(s.val()) {
+            let interval = setInterval(() => {
+                const h = document.createElement('div');
+                h.className = 'floating-heart'; h.innerText = '❤️';
+                h.style.left = Math.random() * 90 + 'vw';
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 4000);
+            }, 150);
+            setTimeout(() => { clearInterval(interval); db.ref('signals/'+u+'/love').remove(); }, 5000);
+        }
     });
-
-    function createHeart() {
-        const h = document.createElement('div');
-        h.className = 'floating-heart';
-        h.innerText = '❤️';
-        h.style.left = Math.random() * 90 + 'vw';
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 4000);
-    }
 
     document.getElementById('mIn').addEventListener('keypress', e => { if(e.key==='Enter') sendM(); });
 </script>
 </body>
 </html>
-
